@@ -13,7 +13,7 @@ Examples of usage:
 '''
 def parse_args():
 	parser = argparse.ArgumentParser(description="csv discretization tool")
-	parser.add_argument("-csv",nargs="?",type=str,help="csv file to discretize",required=True)
+	parser.add_argument("-csv",type=str,help="csv file to discretize",required=True)
 	parser.add_argument("-features",nargs="+",type=str,help="features to discretize (if no specified, all will be discretized)")
 	parser.add_argument("-ignore-features",nargs="+",type=str,help=
 		"features to ignore if all features select (i.e, no features arg specified). if features are specified,\

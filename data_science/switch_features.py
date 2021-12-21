@@ -1,27 +1,41 @@
+#! /usr/bin/python3
 #Utility to change the class feature column to first column on the dataset.
 
 import pandas as pd
-csv = "~/datasets/iris.data.disc"
+import argparse
 
-df = pd.read_csv(csv,sep=",")
 
-target_columns = ["class"]
-columns = df.columns.tolist()
+def parse_args():
+	parser = argparse.ArgumentParser(description="csv switch feature's position")
+	parser.add_argument("-csv",type=str,help="csv file to discretize",required=True)
+	parser.add_argument("-feature",default="class",type=str,help="name of the feature to switch (default \"class\"")
+	parser.add_argument("-position",default=0,type=int,help="target position of the feature (starting from 0)")	
+	return parser.parse_args()
 
-for index,column in enumerate(columns):
-	if column in target_columns:
-		target_index= index
+if __name__ == "__main__":
 
-aux = df.iloc[:,0]
-aux_column = columns[0]
-to_switch = df.iloc[:,target_index]
-to_switch_column = columns[target_index]
+	parser = parse_args()
+	df = pd.read_csv(parser.csv,sep=",")
 
-df.iloc[:,0] = to_switch
-df.iloc[:,target_index] = aux
+	target_column = parser.feature
+	columns = df.columns.tolist()
 
-columns[0] = to_switch_column
-columns[target_index] =aux_column
+	for index,column in enumerate(columns):
+		if column == target_column:
+			target_index= index
 
-new_df = pd.DataFrame(data=df.values,columns=columns)
-new_df.to_csv(f"{csv}.peng",index=False)
+	aux = df.iloc[:,parser.position]
+	aux_column = columns[parser.position]
+	to_switch = df.iloc[:,target_index]
+	to_switch_column = columns[target_index]
+
+	df.iloc[:,parser.position] = to_switch
+	df.iloc[:,target_index] = aux
+
+	columns[parser.position] = to_switch_column
+	columns[target_index] =aux_column
+
+	new_df = pd.DataFrame(data=df.values,columns=columns)
+	new_df.to_csv(f"{parser.csv}.switched",index=False)
+
+	print(f"feature {target_column} switched to position 0 and file saved to {parser.csv}.switched")
